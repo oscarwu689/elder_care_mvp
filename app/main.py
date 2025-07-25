@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from app.web.user_info import router as user_info_router
 
 app = FastAPI(title="Elder Care MVP", version="0.1.0")
+app.include_router(user_info_router)
 
 @app.get("/")
 async def root():

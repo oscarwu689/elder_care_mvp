@@ -1,5 +1,4 @@
-import datetime
-from typing import Union
+from typing import List
 from pydantic import BaseModel
 
 class UserInfo(BaseModel):
@@ -11,3 +10,6 @@ class UserInfo(BaseModel):
     floor: int
     deviceName: str
     sensorStatus: str
+
+class LocationResponse(BaseModel):
+    locations: List[UserInfo]
