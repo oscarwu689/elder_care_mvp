@@ -18,7 +18,7 @@ _user_info_2 = UserInfo(
     x=0,
     y=0,
     z=10,
-    floor=2,
+    floor=1,
     deviceName="device2",
     sensorStatus="low_battery"
 )
