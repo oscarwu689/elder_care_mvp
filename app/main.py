@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 from fastapi import FastAPI
 from app.web.user_info import router as user_info_router
 from app.service.user_info import start_location_updates, stop_location_updates

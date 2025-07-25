@@ -17,7 +17,7 @@ class LocationUpdater:
 
         # Movement trajectory parameters
         self._time_offset = 0.0
-        self._movement_speed = 0.5  # Movement speed (radians/second)
+        self._movement_speed = 0.05  # Movement speed (radians/second)
 
     def start(self):
         """Start the position update loop"""

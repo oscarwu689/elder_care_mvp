@@ -1,4 +1,6 @@
+from app.data.user_info import get_user_info, insert_user_info
 from app.fake.location import _location_data
+from app.model.user_info import UserInfo
 from app.service.location_updater import location_updater
 
 def get_all_users():
