@@ -1,5 +1,5 @@
 import asyncio
-import random
+import math
 import time
 from typing import List
 from app.model.user_info import UserInfo
@@ -9,58 +9,87 @@ class LocationUpdater:
         self._users: List[UserInfo] = []
         self._running = False
         self._task = None
-        
-        # 位置範圍設定
+
+        # Position range settings
         self.x_range = (1.0, 66.93)
         self.z_range = (-11.84, 25.3)
         self.y_value = 0.0
-        
+
+        # Movement trajectory parameters
+        self._time_offset = 0.0
+        self._movement_speed = 0.5  # Movement speed (radians/second)
+
     def start(self):
-        """啟動位置更新循環"""
+        """Start the position update loop"""
         if not self._running:
             self._running = True
+            self._time_offset = time.time()
             self._task = asyncio.create_task(self._update_loop())
-            print("位置更新服務已啟動")
-    
+            print("Location update service started")
+
     def stop(self):
-        """停止位置更新循環"""
+        """Stop the position update loop"""
         self._running = False
         if self._task:
             self._task.cancel()
-            print("位置更新服務已停止")
-    
+            print("Location update service stopped")
+
     def set_users(self, users: List[UserInfo]):
-        """設定要更新的使用者列表"""
+        """Set the list of users to update"""
         self._users = users.copy()
-    
+
     def get_users(self) -> List[UserInfo]:
-        """獲取當前使用者列表"""
+        """Get the current list of users"""
         return self._users.copy()
-    
+
+    def _calculate_position(self, user_index: int, current_time: float) -> tuple[float, float]:
+        """Calculate user position on the trajectory"""
+        # Set different starting angles for each user so they move along different trajectories
+        base_angle = current_time * self._movement_speed + (user_index * math.pi / 2)
+
+        # Use elliptical trajectory for more natural movement
+        center_x = (self.x_range[0] + self.x_range[1]) / 2
+        center_z = (self.z_range[0] + self.z_range[1]) / 2
+
+        # Ellipse radius
+        radius_x = (self.x_range[1] - self.x_range[0]) / 3
+        radius_z = (self.z_range[1] - self.z_range[0]) / 3
+
+        # Calculate position on elliptical trajectory
+        x = center_x + radius_x * math.cos(base_angle)
+        z = center_z + radius_z * math.sin(base_angle * 1.5)  # Slightly different frequency for more complex trajectory
+
+        # Ensure within range
+        x = max(self.x_range[0], min(self.x_range[1], x))
+        z = max(self.z_range[0], min(self.z_range[1], z))
+
+        return round(x, 2), round(z, 2)
+
     async def _update_loop(self):
-        """每秒更新位置的主循環"""
+        """Main loop for updating positions every second"""
         while self._running:
             try:
-                # 更新每個使用者的位置
-                for user in self._users:
-                    # 生成新的 X 和 Z 值
-                    new_x = random.uniform(self.x_range[0], self.x_range[1])
-                    new_z = random.uniform(self.z_range[0], self.z_range[1])
-                    
-                    # 更新使用者位置
-                    user.x = round(new_x, 2)
+                current_time = time.time() - self._time_offset
+
+                # Update each user's position
+                for i, user in enumerate(self._users):
+                    # Calculate new position
+                    new_x, new_z = self._calculate_position(i, current_time)
+
+                    # Update user position
+                    user.x = new_x
                     user.y = self.y_value
-                    user.z = round(new_z, 2)
-                    user.timestamp = int(time.time() * 1000)  # 更新時間戳
-                
-                # 等待 1 秒
+                    user.z = new_z
+                    user.timestamp = int(time.time() * 1000)  # Update timestamp
+
+                # Wait 1 second
                 await asyncio.sleep(1)
-                
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                print(f"位置更新錯誤: {e}")
+                print(f"Position update error: {e}")
                 await asyncio.sleep(1)
 
-# 全域實例
-location_updater = LocationUpdater() 
+# Global instance
+location_updater = LocationUpdater()
