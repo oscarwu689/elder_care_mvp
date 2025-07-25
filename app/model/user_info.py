@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 class UserInfo(BaseModel):
     userId: str
-    timestamp: int  # Unix timestamp in milliseconds
+    timestamp: Optional[int] = None  # Unix timestamp in milliseconds (optional, will use default if not provided)
     x: float
     y: float
     z: float

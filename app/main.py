@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 import os
 from fastapi import FastAPI
-from app.web.user_info import router as user_info_router
+from app.web.user_info_v1 import router as user_info_v1_router
+from app.web.user_info_v2 import router as user_info_v2_router
 from app.service.user_info import start_location_updates, stop_location_updates
 
 
@@ -19,7 +20,8 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan
 )
-app.include_router(user_info_router)
+app.include_router(user_info_v1_router)
+app.include_router(user_info_v2_router)
 
 @app.get("/")
 async def root():

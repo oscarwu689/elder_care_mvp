@@ -1,11 +1,12 @@
 
 from app.data.user_info import delete_user_info_by_id, get_user_info, get_user_info_by_id, insert_user_info
-from app.model.user_info import UserInfo
+from app.model.user_info import UserInfo, LocationResponse
 
 
 def get_user_info_from_db():
     """Get user information from database"""
-    return get_user_info()
+    user_list = get_user_info()
+    return LocationResponse(locations=user_list)
 
 def insert_user_info_to_db(user_info: UserInfo):
     """Insert user information to database"""
