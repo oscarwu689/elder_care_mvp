@@ -11,17 +11,17 @@ def get_users():
 
 @router.post("/start-updates")
 def start_updates():
-    """啟動位置更新服務"""
+    """Start location update service"""
     return start_location_updates()
 
 
 @router.post("/stop-updates")
 def stop_updates():
-    """停止位置更新服務"""
+    """Stop location update service"""
     return stop_location_updates()
 
 
 @router.get("/update-status")
 def get_status():
-    """獲取更新服務狀態"""
+    """Get update service status"""
     return get_update_status()
