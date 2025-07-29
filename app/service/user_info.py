@@ -62,3 +62,12 @@ def reset_trajectory(user_id: str = None):
     """Reset trajectory indices"""
     custom_trajectory_updater.reset_trajectory(user_id)
     return {"message": f"Trajectory reset for {user_id if user_id else 'all users'}"}
+
+def set_interpolation_points(num_points: int):
+    """Set interpolation points between trajectory points"""
+    custom_trajectory_updater.set_interpolation_points(num_points)
+    return {"message": f"Interpolation points set to {num_points}"}
+
+def get_interpolation_info():
+    """Get interpolation information"""
+    return custom_trajectory_updater.get_interpolation_info()

@@ -1,13 +1,15 @@
 from fastapi import APIRouter
 from app.service.user_info import (
-    get_all_users,
-    start_location_updates,
-    stop_location_updates,
+    get_all_users, 
+    start_location_updates, 
+    stop_location_updates, 
     get_update_status,
     start_custom_trajectory_updates,
     stop_custom_trajectory_updates,
     get_trajectory_info,
-    reset_trajectory
+    reset_trajectory,
+    set_interpolation_points,
+    get_interpolation_info
 )
 
 router = APIRouter(prefix="/api/v1/user")
@@ -59,3 +61,13 @@ def reset_trajectory_endpoint(user_id: str):
 def reset_all_trajectories():
     """Reset all trajectories"""
     return reset_trajectory()
+
+@router.post("/set-interpolation-points/{num_points}")
+def set_interpolation_points_endpoint(num_points: int):
+    """Set interpolation points between trajectory points"""
+    return set_interpolation_points(num_points)
+
+@router.get("/interpolation-info")
+def get_interpolation_info_endpoint():
+    """Get interpolation information"""
+    return get_interpolation_info()

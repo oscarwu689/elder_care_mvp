@@ -1,5 +1,6 @@
 import asyncio
 import time
+import math
 from typing import List, Dict, Tuple
 from app.model.user_info import UserInfo
 
@@ -10,8 +11,8 @@ class CustomTrajectoryUpdater:
         self._task = None
         self._time_offset = 0.0
 
-        # fake data
-        self._trajectories = {
+        # 老闆提供的原始軌跡數據
+        self._original_trajectories = {
             "user_1": [
                 (64.4, -1.9), (55.9, -1.9), (55.9, -8.1), (20, -8.1),
                 (20, 7), (9.5, 7), (9.5, 17.5), (9.5, 7),
@@ -38,9 +39,77 @@ class CustomTrajectoryUpdater:
             ]
         }
 
+        # 內插後的軌跡數據
+        self._trajectories = {}
+        self._interpolation_points = 10  # 每兩個點之間插入的點數
+
+        # 生成內插軌跡
+        self._generate_interpolated_trajectories()
+
         # each user's trajectory index
         self._trajectory_indices = {}
         self._y_value = 0.0
+
+    def _interpolate_between_points(self, point1: Tuple[float, float], point2: Tuple[float, float], num_points: int) -> List[Tuple[float, float]]:
+        """在兩個點之間進行線性內插"""
+        x1, z1 = point1
+        x2, z2 = point2
+
+        interpolated_points = []
+        for i in range(num_points + 1):  # +1 包含起始點
+            t = i / num_points  # 插值參數 (0 到 1)
+            x = x1 + (x2 - x1) * t
+            z = z1 + (z2 - z1) * t
+            interpolated_points.append((round(x, 2), round(z, 2)))
+
+        return interpolated_points
+
+    def _generate_interpolated_trajectories(self):
+        """生成內插後的軌跡數據"""
+        for user_id, original_trajectory in self._original_trajectories.items():
+            interpolated_trajectory = []
+
+            for i in range(len(original_trajectory)):
+                current_point = original_trajectory[i]
+                next_point = original_trajectory[(i + 1) % len(original_trajectory)]  # 循環到第一個點
+
+                # 在當前點和下一個點之間進行內插
+                interpolated_segment = self._interpolate_between_points(
+                    current_point,
+                    next_point,
+                    self._interpolation_points
+                )
+
+                # 添加內插點（除了最後一個點，避免重複）
+                if i < len(original_trajectory) - 1:
+                    interpolated_trajectory.extend(interpolated_segment[:-1])  # 不包含最後一個點
+                else:
+                    # 最後一段包含所有點，確保軌跡閉合
+                    interpolated_trajectory.extend(interpolated_segment)
+
+            self._trajectories[user_id] = interpolated_trajectory
+
+    def set_interpolation_points(self, num_points: int):
+        """設置內插點數"""
+        self._interpolation_points = num_points
+        self._generate_interpolated_trajectories()
+        # 重置所有用戶的軌跡索引
+        for user_id in self._trajectory_indices:
+            self._trajectory_indices[user_id] = 0
+
+    def get_interpolation_info(self) -> Dict:
+        """獲取內插信息"""
+        info = {}
+        for user_id in self._original_trajectories:
+            original_count = len(self._original_trajectories[user_id])
+            interpolated_count = len(self._trajectories[user_id])
+            info[user_id] = {
+                "original_points": original_count,
+                "interpolated_points": interpolated_count,
+                "interpolation_points_per_segment": self._interpolation_points,
+                "total_segments": original_count
+            }
+        return info
 
     def start(self):
         """Start the custom trajectory update loop"""
