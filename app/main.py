@@ -3,17 +3,17 @@ import os
 from fastapi import FastAPI, WebSocket
 from app.web.user_info_v1 import router as user_info_v1_router
 from app.web.user_info_v2 import router as user_info_v2_router
-from app.service.user_info import start_location_updates, stop_location_updates
+from app.service.user_info import start_location_updates, stop_location_updates, start_custom_trajectory_updates, stop_custom_trajectory_updates
 from fastapi.responses import HTMLResponse
 from app.scripts.html_script import html
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Execute on startup: start location update service
-    start_location_updates()
+    # Execute on startup: start custom trajectory update service
+    start_custom_trajectory_updates()
     yield
-    # Execute on shutdown: stop location update service
-    stop_location_updates()
+    # Execute on shutdown: stop custom trajectory update service
+    stop_custom_trajectory_updates()
 
 
 app = FastAPI(

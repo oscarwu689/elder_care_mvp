@@ -20,5 +20,16 @@ _user_info_2 = UserInfo(
     z=10,
     floor=1,
     deviceName="device2",
+    sensorStatus="normal"
+)
+
+_user_info_3 = UserInfo(
+    userId="user_3",
+    timestamp=1716729600,
+    x=30,
+    y=0,
+    z=15,
+    floor=1,
+    deviceName="device3",
     sensorStatus="low_battery"
 )
