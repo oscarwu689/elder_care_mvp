@@ -9,7 +9,6 @@ class UserInfo(BaseModel):
     z: float
     floor: int
     deviceName: str
-    sensorStatus: str
 
 class LocationResponse(BaseModel):
     locations: List[UserInfo]
