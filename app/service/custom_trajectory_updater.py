@@ -37,14 +37,7 @@ class CustomTrajectoryUpdater:
                 (9.5, 7), (22, 7), (22, 21.7), (22, 7),
                 (34, 7), (34, 15.5), (34, 7), (42.1, 7)
             ],
-            "2353": [
-                (17.3, -16.2), (25.0, -10.0), (35.0, -5.0), (45.0, 0.0),
-                (55.0, 5.0), (65.0, 10.0), (55.0, 15.0), (45.0, 20.0),
-                (35.0, 15.0), (25.0, 10.0), (15.0, 5.0), (5.0, 0.0),
-                (15.0, -5.0), (25.0, -10.0), (35.0, -15.0), (45.0, -20.0),
-                (35.0, -15.0), (25.0, -10.0), (15.0, -5.0), (5.0, 0.0),
-                (15.0, 5.0), (25.0, 10.0), (35.0, 15.0), (17.3, -16.2)
-            ]
+
         }
 
         # 內插後的軌跡數據
@@ -154,6 +147,10 @@ class CustomTrajectoryUpdater:
         if user_id not in self._trajectories:
             # if user has no defined trajectory, return current position
             return None, None
+
+        # 特殊處理：用戶 2353 保持固定位置
+        if user_id == "2353":
+            return None, None  # 返回 None 表示不更新位置
 
         trajectory = self._trajectories[user_id]
         current_index = self._trajectory_indices.get(user_id, 0)
