@@ -148,8 +148,8 @@ class CustomTrajectoryUpdater:
             # if user has no defined trajectory, return current position
             return None, None
 
-        # 特殊處理：用戶 2353 保持固定位置
-        if user_id == "2353":
+        # 特殊處理：用戶 2353 和 92 保持固定位置
+        if user_id == "2353" or user_id == "92":
             return None, None  # 返回 None 表示不更新位置
 
         trajectory = self._trajectories[user_id]

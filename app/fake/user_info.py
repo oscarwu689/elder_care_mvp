@@ -24,9 +24,9 @@ _user_info_2 = UserInfo(
 _user_info_3 = UserInfo(
     userId="92",
     timestamp=1716729600,
-    x=30,
+    x=6.5,
     y=0,
-    z=15,
+    z=0.6,
     floor=1,
     deviceName="device3"
 )
